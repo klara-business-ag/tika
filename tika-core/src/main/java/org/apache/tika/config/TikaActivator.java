@@ -41,6 +41,11 @@ public class TikaActivator implements BundleActivator, ServiceTrackerCustomizer 
     private ServiceTracker detectorTracker;
 
     private ServiceTracker parserTracker;
+    
+    private ServiceTracker zipDetectorTracker;
+    
+    private ServiceTracker metadataFilterTracker;
+    
 
     private BundleContext bundleContext;
     //-----------------------------------------------------< BundleActivator >
@@ -50,14 +55,20 @@ public class TikaActivator implements BundleActivator, ServiceTrackerCustomizer 
 
         detectorTracker = new ServiceTracker(context, Detector.class.getName(), this);
         parserTracker = new ServiceTracker(context, Parser.class.getName(), this);
-
+        zipDetectorTracker = new ServiceTracker(context, "org.apache.tika.detect.zip.ZipContainerDetector", this);
+        metadataFilterTracker = new ServiceTracker(context, "org.apache.tika.metadata.filter.MetadataFilter", this);
+        
         detectorTracker.open();
         parserTracker.open();
+        zipDetectorTracker.open();
+        metadataFilterTracker.open();
     }
 
     public void stop(BundleContext context) throws Exception {
         parserTracker.close();
         detectorTracker.close();
+        zipDetectorTracker.close();
+        metadataFilterTracker.close();
     }
 
     public Object addingService(ServiceReference reference) {
