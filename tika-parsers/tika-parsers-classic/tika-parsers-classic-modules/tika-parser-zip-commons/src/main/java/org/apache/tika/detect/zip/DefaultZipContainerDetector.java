@@ -77,7 +77,7 @@ public class DefaultZipContainerDetector implements Detector {
     
     public DefaultZipContainerDetector(List<ZipContainerDetector> zipDetectors) {
         //TODO: OPCBased needs to be last!!!
-        setDetectors(zipDetectors);
+        staticZipDetectors0 = zipDetectors;
     }
     
     
@@ -254,10 +254,6 @@ public class DefaultZipContainerDetector implements Detector {
             }
         }
         return MediaType.APPLICATION_ZIP;
-    }
-    
-    private void setDetectors(List<ZipContainerDetector> zipDetectors) {
-        this.staticZipDetectors0 = zipDetectors;
     }
     
     private List<ZipContainerDetector> getDetectors() {

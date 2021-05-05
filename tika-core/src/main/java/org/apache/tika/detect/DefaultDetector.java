@@ -114,8 +114,9 @@ public class DefaultDetector extends CompositeDetector {
                     loader.loadDynamicServiceProviders(Detector.class);
             detectors.addAll(super.getDetectors());
             return detectors;
-        } 
-        return super.getDetectors();
+        } else {
+            return super.getDetectors();
+        }
     }
 
 }
