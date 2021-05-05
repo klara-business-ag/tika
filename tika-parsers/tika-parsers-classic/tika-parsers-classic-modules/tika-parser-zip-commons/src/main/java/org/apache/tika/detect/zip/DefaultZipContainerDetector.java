@@ -26,6 +26,7 @@ import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.CloseShieldInputStream;
 import org.apache.tika.config.Field;
+import org.apache.tika.config.LoadErrorHandler;
 import org.apache.tika.config.ServiceLoader;
 import org.apache.tika.detect.Detector;
 import org.apache.tika.io.LookaheadInputStream;
@@ -36,6 +37,7 @@ import org.apache.tika.mime.MediaType;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DefaultZipContainerDetector implements Detector {
@@ -60,20 +62,24 @@ public class DefaultZipContainerDetector implements Detector {
     @Field
     int markLimit = 16 * 1024 * 1024;
 
-    List<ZipContainerDetector> zipDetectors;
+    private ServiceLoader loader0;
+
+    private List<ZipContainerDetector> staticZipDetectors0;
+
 
     public DefaultZipContainerDetector() {
-        this(new ServiceLoader(DefaultZipContainerDetector.class.getClassLoader()));
+        // Empty
     }
 
     public DefaultZipContainerDetector(ServiceLoader loader) {
-        this(loader.loadServiceProviders(ZipContainerDetector.class));
+        this.loader0 = loader;
     }
 
     public DefaultZipContainerDetector(List<ZipContainerDetector> zipDetectors) {
         //TODO: OPCBased needs to be last!!!
-        this.zipDetectors = zipDetectors;
+        staticZipDetectors0 = zipDetectors;
     }
+
 
     /**
      * If this is less than 0, the file will be spooled to disk,
@@ -141,7 +147,7 @@ public class DefaultZipContainerDetector implements Detector {
             ZipFile zip = new ZipFile(tis.getFile()); // TODO: hasFile()?
 
             try{
-            for (ZipContainerDetector zipDetector : zipDetectors) {
+            for (ZipContainerDetector zipDetector : getDetectors()) {
                 MediaType type = zipDetector.detect(zip, tis);
                 if (type != null) {
                     return type;
@@ -231,7 +237,7 @@ public class DefaultZipContainerDetector implements Detector {
 
     private MediaType detect(ZipArchiveEntry zae, ZipArchiveInputStream zis,
                              StreamingDetectContext detectContext) throws IOException {
-        for (ZipContainerDetector d : zipDetectors) {
+        for (ZipContainerDetector d : getDetectors()) {
             MediaType mt = d.streamingDetectUpdate(zae, zis, detectContext);
             if (mt != null) {
                 return mt;
@@ -241,12 +247,33 @@ public class DefaultZipContainerDetector implements Detector {
     }
 
     private MediaType finalDetect(StreamingDetectContext detectContext) {
-        for (ZipContainerDetector d : zipDetectors) {
+        for (ZipContainerDetector d : getDetectors()) {
             MediaType mt = d.streamingDetectFinal(detectContext);
             if (mt != null) {
                 return mt;
             }
         }
         return MediaType.APPLICATION_ZIP;
+    }
+
+    private List<ZipContainerDetector> getDetectors() {
+        List<ZipContainerDetector> zipDetectors = new ArrayList<>();
+        ServiceLoader loader = getServiceLoader();
+        zipDetectors.addAll(loader.loadDynamicServiceProviders(ZipContainerDetector.class));
+        if (staticZipDetectors0 == null) {
+            staticZipDetectors0 = new ArrayList<ZipContainerDetector>();
+            staticZipDetectors0.addAll(loader.loadStaticServiceProviders(ZipContainerDetector.class));
+        }
+        
+        zipDetectors.addAll(staticZipDetectors0);
+        return zipDetectors;
+    }
+
+    private ServiceLoader getServiceLoader() {
+        if (loader0 ==  null) {
+            loader0 = new ServiceLoader(DefaultZipContainerDetector.class.getClassLoader(), Boolean.getBoolean("org.apache.tika.service.error.warn") 
+                ? LoadErrorHandler.WARN:LoadErrorHandler.IGNORE, true);
+        }
+        return loader0;
     }
 }
