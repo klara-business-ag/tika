@@ -147,12 +147,12 @@ public class DefaultZipContainerDetector implements Detector {
             ZipFile zip = new ZipFile(tis.getFile()); // TODO: hasFile()?
 
             try{
-                for (ZipContainerDetector zipDetector : getDetectors()) {
-                    MediaType type = zipDetector.detect(zip, tis);
-                    if (type != null) {
-                        return type;
-                    }
+            for (ZipContainerDetector zipDetector : getDetectors()) {
+                MediaType type = zipDetector.detect(zip, tis);
+                if (type != null) {
+                    return type;
                 }
+            }
             } finally {
                 tis.setOpenContainer(zip);
             }
