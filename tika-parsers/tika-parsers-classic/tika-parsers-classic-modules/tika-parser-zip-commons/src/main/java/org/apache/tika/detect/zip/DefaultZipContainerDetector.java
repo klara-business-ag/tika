@@ -216,7 +216,7 @@ public class DefaultZipContainerDetector implements Detector {
         StreamingDetectContext detectContext = new StreamingDetectContext();
         try (
                 ZipArchiveInputStream zis =
-                new ZipArchiveInputStream(new CloseShieldInputStream(input))) {
+                        new ZipArchiveInputStream(new CloseShieldInputStream(input))) {
             ZipArchiveEntry zae = zis.getNextZipEntry();
             while (zae != null) {
                 MediaType mt = detect(zae, zis, detectContext);
@@ -236,7 +236,7 @@ public class DefaultZipContainerDetector implements Detector {
 
 
     private MediaType detect(ZipArchiveEntry zae, ZipArchiveInputStream zis,
-            StreamingDetectContext detectContext) throws IOException {
+                             StreamingDetectContext detectContext) throws IOException {
         for (ZipContainerDetector d : getDetectors()) {
             MediaType mt = d.streamingDetectUpdate(zae, zis, detectContext);
             if (mt != null) {
@@ -257,14 +257,15 @@ public class DefaultZipContainerDetector implements Detector {
     }
 
     private List<ZipContainerDetector> getDetectors() {
+        List<ZipContainerDetector> zipDetectors = new ArrayList<>();
         ServiceLoader loader = getServiceLoader();
+        zipDetectors.addAll(loader.loadDynamicServiceProviders(ZipContainerDetector.class));
         if (staticZipDetectors0 == null) {
             staticZipDetectors0 = new ArrayList<ZipContainerDetector>();
             staticZipDetectors0.addAll(loader.loadStaticServiceProviders(ZipContainerDetector.class));
         }
-        List<ZipContainerDetector> zipDetectors = new ArrayList<>();
+        
         zipDetectors.addAll(staticZipDetectors0);
-        zipDetectors.addAll(loader.loadDynamicServiceProviders(ZipContainerDetector.class));
         return zipDetectors;
     }
 
