@@ -202,7 +202,7 @@ public class DefaultZipContainerDetector implements Detector {
             return MediaType.OCTET_STREAM;
         }
     }
-    
+
     static MediaType detectCompressorFormat(byte[] prefix, int length) {
         try {
             String type = CompressorStreamFactory.detect(new ByteArrayInputStream(prefix, 0, length));
@@ -211,7 +211,7 @@ public class DefaultZipContainerDetector implements Detector {
             return MediaType.OCTET_STREAM;
         }
     }
-    
+
     MediaType detectStreaming(InputStream input, Metadata metadata) throws IOException {
         StreamingDetectContext detectContext = new StreamingDetectContext();
         try (
