@@ -64,7 +64,7 @@ public class DefaultZipContainerDetector implements Detector {
     
     private ServiceLoader loader0;
     
-    private List<ZipContainerDetector> zipDetectors0;
+    private List<ZipContainerDetector> staticZipDetectors0;
     
     
     public DefaultZipContainerDetector() {
@@ -257,17 +257,19 @@ public class DefaultZipContainerDetector implements Detector {
     }
     
     private void setDetectors(List<ZipContainerDetector> zipDetectors) {
-        this.zipDetectors0 = zipDetectors;
+        this.staticZipDetectors0 = zipDetectors;
     }
     
     private List<ZipContainerDetector> getDetectors() {
-        if (zipDetectors0 == null) {
-            ServiceLoader loader = getServiceLoader();
-            zipDetectors0 = new ArrayList<ZipContainerDetector>();
-            zipDetectors0.addAll(loader.loadStaticServiceProviders(ZipContainerDetector.class));
-            zipDetectors0.addAll(loader.loadDynamicServiceProviders(ZipContainerDetector.class));
+        ServiceLoader loader = getServiceLoader();
+        if (staticZipDetectors0 == null) {
+            staticZipDetectors0 = new ArrayList<ZipContainerDetector>();
+            staticZipDetectors0.addAll(loader.loadStaticServiceProviders(ZipContainerDetector.class));
         }
-        return zipDetectors0;
+        List<ZipContainerDetector> zipDetectors = new ArrayList<>();
+        zipDetectors.addAll(staticZipDetectors0);
+        zipDetectors.addAll(loader.loadDynamicServiceProviders(ZipContainerDetector.class));
+        return zipDetectors;
     }
     
     private ServiceLoader getServiceLoader() {
