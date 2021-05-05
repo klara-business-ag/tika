@@ -17,11 +17,9 @@
 package org.apache.tika.detect;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
-
 import javax.imageio.spi.ServiceRegistry;
-
+import org.apache.tika.config.LoadErrorHandler;
 import org.apache.tika.config.ServiceLoader;
 import org.apache.tika.mime.MimeTypes;
 import org.apache.tika.utils.ServiceLoaderUtils;
@@ -92,7 +90,8 @@ public class DefaultDetector extends CompositeDetector {
     }
 
     public DefaultDetector(MimeTypes types, ClassLoader loader) {
-        this(types, new ServiceLoader(loader));
+        this(types, new ServiceLoader(loader, Boolean.getBoolean("org.apache.tika.service.error.warn") 
+                ? LoadErrorHandler.WARN:LoadErrorHandler.IGNORE, true));
     }
 
     public DefaultDetector(ClassLoader loader) {

@@ -17,6 +17,9 @@
 package org.apache.tika.config;
 
 import org.apache.tika.detect.Detector;
+import org.apache.tika.detect.EncodingDetector;
+import org.apache.tika.extractor.EmbeddedStreamTranslator;
+import org.apache.tika.metadata.filter.MetadataFilter;
 import org.apache.tika.parser.Parser;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -39,10 +42,14 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 public class TikaActivator implements BundleActivator, ServiceTrackerCustomizer {
 
     private ServiceTracker detectorTracker;
+    
+    private ServiceTracker encodingDetectorTracker;
 
     private ServiceTracker parserTracker;
     
     private ServiceTracker zipDetectorTracker;
+    
+    private ServiceTracker embeddedStreamTranslatorTracker;
     
     private ServiceTracker metadataFilterTracker;
     
@@ -54,20 +61,26 @@ public class TikaActivator implements BundleActivator, ServiceTrackerCustomizer 
         bundleContext = context;
 
         detectorTracker = new ServiceTracker(context, Detector.class.getName(), this);
+        encodingDetectorTracker = new ServiceTracker(context, EncodingDetector.class.getName(), this);
         parserTracker = new ServiceTracker(context, Parser.class.getName(), this);
         zipDetectorTracker = new ServiceTracker(context, "org.apache.tika.detect.zip.ZipContainerDetector", this);
-        metadataFilterTracker = new ServiceTracker(context, "org.apache.tika.metadata.filter.MetadataFilter", this);
+        embeddedStreamTranslatorTracker = new ServiceTracker(context, EmbeddedStreamTranslator.class.getName(), this);
+        metadataFilterTracker = new ServiceTracker(context, MetadataFilter.class.getName(), this);
         
         detectorTracker.open();
+        encodingDetectorTracker.open();
         parserTracker.open();
         zipDetectorTracker.open();
+        embeddedStreamTranslatorTracker.open();
         metadataFilterTracker.open();
     }
 
     public void stop(BundleContext context) throws Exception {
         parserTracker.close();
+        encodingDetectorTracker.close();
         detectorTracker.close();
         zipDetectorTracker.close();
+        embeddedStreamTranslatorTracker.close();
         metadataFilterTracker.close();
     }
 

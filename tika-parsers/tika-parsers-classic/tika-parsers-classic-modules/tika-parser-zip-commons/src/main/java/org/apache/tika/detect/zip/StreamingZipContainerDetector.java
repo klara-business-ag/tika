@@ -18,6 +18,7 @@ package org.apache.tika.detect.zip;
 
 
 import org.apache.commons.io.IOUtils;
+import org.apache.tika.config.LoadErrorHandler;
 import org.apache.tika.config.ServiceLoader;
 import org.apache.tika.io.LookaheadInputStream;
 import org.apache.tika.metadata.Metadata;
@@ -38,19 +39,19 @@ public class StreamingZipContainerDetector extends DefaultZipContainerDetector {
     /** Serial version UID */
     private static final long serialVersionUID = 2891763938430295453L;
 
-    List<ZipContainerDetector> zipDetectors;
+    
 
     public StreamingZipContainerDetector() {
-        this(new ServiceLoader(StreamingZipContainerDetector.class.getClassLoader()));
+       // Empty
     }
 
     public StreamingZipContainerDetector(ServiceLoader loader) {
-        this(loader.loadServiceProviders(ZipContainerDetector.class));
+        super(loader);
     }
 
     public StreamingZipContainerDetector(List<ZipContainerDetector> zipDetectors) {
         //TODO: OPCBased needs to be last!!!
-        this.zipDetectors = zipDetectors;
+        super(zipDetectors);
     }
 
 
@@ -85,4 +86,5 @@ public class StreamingZipContainerDetector extends DefaultZipContainerDetector {
             return detectCompressorFormat(prefix, length);
         }
     }
+    
 }

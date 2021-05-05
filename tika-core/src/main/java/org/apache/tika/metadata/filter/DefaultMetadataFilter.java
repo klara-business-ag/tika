@@ -16,13 +16,15 @@
  */
 package org.apache.tika.metadata.filter;
 
+import java.util.List;
+import org.apache.tika.config.LoadErrorHandler;
 import org.apache.tika.config.ServiceLoader;
-import org.apache.tika.mime.MimeTypes;
 import org.apache.tika.utils.ServiceLoaderUtils;
 
-import java.util.List;
-
 public class DefaultMetadataFilter extends CompositeMetadataFilter {
+
+    private ServiceLoader serviceLoader;
+
 
     private static List<MetadataFilter> getDefaultFilters(
             ServiceLoader loader) {
@@ -34,6 +36,7 @@ public class DefaultMetadataFilter extends CompositeMetadataFilter {
 
     public DefaultMetadataFilter(ServiceLoader serviceLoader) {
         super(getDefaultFilters(serviceLoader));
+        this.serviceLoader = serviceLoader;
     }
 
     public DefaultMetadataFilter(List<MetadataFilter> metadataFilters) {
@@ -41,6 +44,18 @@ public class DefaultMetadataFilter extends CompositeMetadataFilter {
     }
 
     public DefaultMetadataFilter() {
-        this(new ServiceLoader());
+        this(new ServiceLoader(DefaultMetadataFilter.class.getClassLoader(), Boolean.getBoolean("org.apache.tika.service.error.warn") 
+                ? LoadErrorHandler.WARN:LoadErrorHandler.IGNORE, true));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected List<MetadataFilter> getFilters() {
+        if (serviceLoader != null) {
+            List<MetadataFilter> filters = serviceLoader.loadDynamicServiceProviders(MetadataFilter.class);
+            filters.addAll(super.getFilters());
+            return filters;
+        }
+        return super.getFilters();
     }
 }

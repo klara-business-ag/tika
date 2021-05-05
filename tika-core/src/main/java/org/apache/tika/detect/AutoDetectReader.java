@@ -22,10 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
 import java.util.Collections;
 import java.util.List;
-
 import org.apache.tika.config.LoadErrorHandler;
 import org.apache.tika.config.ServiceLoader;
 import org.apache.tika.exception.TikaException;
@@ -43,7 +41,8 @@ import org.xml.sax.InputSource;
 public class AutoDetectReader extends BufferedReader {
 
     private static final ServiceLoader DEFAULT_LOADER =
-            new ServiceLoader(AutoDetectReader.class.getClassLoader());
+            new ServiceLoader(AutoDetectReader.class.getClassLoader(), Boolean.getBoolean("org.apache.tika.service.error.warn") 
+                    ? LoadErrorHandler.WARN:LoadErrorHandler.IGNORE, true);
 
     private static EncodingDetector DEFAULT_DETECTOR;
 

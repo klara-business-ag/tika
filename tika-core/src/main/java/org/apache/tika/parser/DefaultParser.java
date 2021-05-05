@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
+import org.apache.tika.config.LoadErrorHandler;
 import org.apache.tika.config.ServiceLoader;
 import org.apache.tika.detect.DefaultEncodingDetector;
 import org.apache.tika.detect.EncodingDetector;
@@ -101,11 +101,13 @@ public class DefaultParser extends CompositeParser {
     }
 
     public DefaultParser(MediaTypeRegistry registry, ClassLoader loader) {
-        this(registry, new ServiceLoader(loader));
+        this(registry, new ServiceLoader(loader, Boolean.getBoolean("org.apache.tika.service.error.warn") 
+                ? LoadErrorHandler.WARN:LoadErrorHandler.IGNORE, true));
     }
 
     public DefaultParser(ClassLoader loader) {
-        this(MediaTypeRegistry.getDefaultRegistry(), new ServiceLoader(loader));
+        this(MediaTypeRegistry.getDefaultRegistry(), new ServiceLoader(loader, Boolean.getBoolean("org.apache.tika.service.error.warn") 
+                ? LoadErrorHandler.WARN:LoadErrorHandler.IGNORE, true));
     }
 
     public DefaultParser(MediaTypeRegistry registry) {
