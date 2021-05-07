@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
+import org.apache.tika.config.ServiceLoader;
 import org.apache.tika.metadata.Metadata;
 
 public class CompositeEncodingDetector implements EncodingDetector, Serializable {
@@ -35,6 +35,8 @@ public class CompositeEncodingDetector implements EncodingDetector, Serializable
     private static final long serialVersionUID = 5980683158436430252L;
 
     private final List<EncodingDetector> detectors;
+
+    private ServiceLoader loader;
 
     public CompositeEncodingDetector(List<EncodingDetector> detectors,
                                      Collection<Class<? extends EncodingDetector>> excludeEncodingDetectors) {
@@ -50,6 +52,15 @@ public class CompositeEncodingDetector implements EncodingDetector, Serializable
     public CompositeEncodingDetector(List<EncodingDetector> detectors) {
         this.detectors = new LinkedList<>();
         this.detectors.addAll(detectors);
+    }
+
+    /**
+     * Creates a new instance of {@code CompositeEncodingDetector}.
+     */
+    public CompositeEncodingDetector(ServiceLoader loader) {
+        this.loader = loader;
+        this.detectors = new LinkedList<>();
+        this.detectors.addAll(loader.loadStaticServiceProviders(EncodingDetector.class));
     }
 
     /**
@@ -71,7 +82,12 @@ public class CompositeEncodingDetector implements EncodingDetector, Serializable
     }
 
     public List<EncodingDetector> getDetectors() {
-        return Collections.unmodifiableList(detectors);
+        List<EncodingDetector> allDetectors = new LinkedList<>();
+        if (loader != null) {
+            allDetectors.addAll(loader.loadDynamicServiceProviders(EncodingDetector.class));
+        }
+        allDetectors.addAll(detectors);
+        return allDetectors;
     }
 
     private boolean isExcluded(Collection<Class<? extends EncodingDetector>> excludeEncodingDetectors,

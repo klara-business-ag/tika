@@ -125,8 +125,7 @@ public class AutoDetectReader extends BufferedReader {
 
     public AutoDetectReader(InputStream stream, Metadata metadata)
             throws IOException, TikaException {
-        this(stream, metadata, new CompositeEncodingDetector(
-                DEFAULT_LOADER.loadServiceProviders(EncodingDetector.class)));
+        this(stream, metadata, new CompositeEncodingDetector(DEFAULT_LOADER));
     }
 
     public AutoDetectReader(InputStream stream)
