@@ -62,22 +62,23 @@ public class DefaultZipContainerDetector implements Detector {
     @Field
     int markLimit = 16 * 1024 * 1024;
 
-    private ServiceLoader loader0;
+    private ServiceLoader loader;
 
-    private List<ZipContainerDetector> staticZipDetectors0;
+    private List<ZipContainerDetector> staticZipDetectors;
 
 
     public DefaultZipContainerDetector() {
-        // Empty
+        loader = new ServiceLoader(DefaultZipContainerDetector.class.getClassLoader(), Boolean.getBoolean("org.apache.tika.service.error.warn") 
+                ? LoadErrorHandler.WARN:LoadErrorHandler.IGNORE, true);
     }
 
     public DefaultZipContainerDetector(ServiceLoader loader) {
-        this.loader0 = loader;
+        this.loader = loader;
     }
 
     public DefaultZipContainerDetector(List<ZipContainerDetector> zipDetectors) {
         //TODO: OPCBased needs to be last!!!
-        staticZipDetectors0 = zipDetectors;
+        staticZipDetectors = zipDetectors;
     }
 
 
@@ -258,22 +259,16 @@ public class DefaultZipContainerDetector implements Detector {
 
     private List<ZipContainerDetector> getDetectors() {
         List<ZipContainerDetector> zipDetectors = new ArrayList<>();
-        ServiceLoader loader = getServiceLoader();
-        zipDetectors.addAll(loader.loadDynamicServiceProviders(ZipContainerDetector.class));
-        if (staticZipDetectors0 == null) {
-            staticZipDetectors0 = new ArrayList<ZipContainerDetector>();
-            staticZipDetectors0.addAll(loader.loadStaticServiceProviders(ZipContainerDetector.class));
+        if (loader != null) {
+            zipDetectors.addAll(loader.loadDynamicServiceProviders(ZipContainerDetector.class));
+            if (staticZipDetectors == null) {
+                staticZipDetectors = new ArrayList<ZipContainerDetector>();
+                staticZipDetectors.addAll(loader.loadStaticServiceProviders(ZipContainerDetector.class));
+            }
         }
-        
-        zipDetectors.addAll(staticZipDetectors0);
+        if (staticZipDetectors != null) {
+            zipDetectors.addAll(staticZipDetectors);
+        }
         return zipDetectors;
-    }
-
-    private ServiceLoader getServiceLoader() {
-        if (loader0 ==  null) {
-            loader0 = new ServiceLoader(DefaultZipContainerDetector.class.getClassLoader(), Boolean.getBoolean("org.apache.tika.service.error.warn") 
-                ? LoadErrorHandler.WARN:LoadErrorHandler.IGNORE, true);
-        }
-        return loader0;
     }
 }

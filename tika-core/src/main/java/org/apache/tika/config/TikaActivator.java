@@ -42,17 +42,16 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 public class TikaActivator implements BundleActivator, ServiceTrackerCustomizer {
 
     private ServiceTracker detectorTracker;
-    
+
+    private ServiceTracker embeddedStreamTranslatorTracker;
+
     private ServiceTracker encodingDetectorTracker;
 
-    private ServiceTracker parserTracker;
-    
-    private ServiceTracker zipDetectorTracker;
-    
-    private ServiceTracker embeddedStreamTranslatorTracker;
-    
     private ServiceTracker metadataFilterTracker;
-    
+
+    private ServiceTracker parserTracker;
+
+    private ServiceTracker zipDetectorTracker;
 
     private BundleContext bundleContext;
     //-----------------------------------------------------< BundleActivator >
@@ -61,27 +60,28 @@ public class TikaActivator implements BundleActivator, ServiceTrackerCustomizer 
         bundleContext = context;
 
         detectorTracker = new ServiceTracker(context, Detector.class.getName(), this);
+        embeddedStreamTranslatorTracker = new ServiceTracker(context, EmbeddedStreamTranslator.class.getName(), this);
         encodingDetectorTracker = new ServiceTracker(context, EncodingDetector.class.getName(), this);
+        metadataFilterTracker = new ServiceTracker(context, MetadataFilter.class.getName(), this);
         parserTracker = new ServiceTracker(context, Parser.class.getName(), this);
         zipDetectorTracker = new ServiceTracker(context, "org.apache.tika.detect.zip.ZipContainerDetector", this);
-        embeddedStreamTranslatorTracker = new ServiceTracker(context, EmbeddedStreamTranslator.class.getName(), this);
-        metadataFilterTracker = new ServiceTracker(context, MetadataFilter.class.getName(), this);
-        
+
         detectorTracker.open();
+        embeddedStreamTranslatorTracker.open();
         encodingDetectorTracker.open();
+        metadataFilterTracker.open();
         parserTracker.open();
         zipDetectorTracker.open();
-        embeddedStreamTranslatorTracker.open();
-        metadataFilterTracker.open();
     }
 
     public void stop(BundleContext context) throws Exception {
-        parserTracker.close();
-        encodingDetectorTracker.close();
+        
         detectorTracker.close();
-        zipDetectorTracker.close();
         embeddedStreamTranslatorTracker.close();
+        encodingDetectorTracker.close();
         metadataFilterTracker.close();
+        parserTracker.close();
+        zipDetectorTracker.close();
     }
 
     public Object addingService(ServiceReference reference) {

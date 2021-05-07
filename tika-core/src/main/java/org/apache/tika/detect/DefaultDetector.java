@@ -90,8 +90,7 @@ public class DefaultDetector extends CompositeDetector {
     }
 
     public DefaultDetector(MimeTypes types, ClassLoader loader) {
-        this(types, new ServiceLoader(loader, Boolean.getBoolean("org.apache.tika.service.error.warn") 
-                ? LoadErrorHandler.WARN:LoadErrorHandler.IGNORE, true));
+        this(types, new ServiceLoader(loader));
     }
 
     public DefaultDetector(ClassLoader loader) {

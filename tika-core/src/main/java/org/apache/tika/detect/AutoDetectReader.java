@@ -44,13 +44,6 @@ public class AutoDetectReader extends BufferedReader {
             new ServiceLoader(AutoDetectReader.class.getClassLoader(), Boolean.getBoolean("org.apache.tika.service.error.warn") 
                     ? LoadErrorHandler.WARN:LoadErrorHandler.IGNORE, true);
 
-    private static EncodingDetector DEFAULT_DETECTOR;
-
-    static {
-        DEFAULT_DETECTOR = new CompositeEncodingDetector(
-                DEFAULT_LOADER.loadServiceProviders(EncodingDetector.class));
-    }
-
     private static Charset detect(
             InputStream input, Metadata metadata,
             List<EncodingDetector> detectors, LoadErrorHandler handler)
@@ -132,7 +125,8 @@ public class AutoDetectReader extends BufferedReader {
 
     public AutoDetectReader(InputStream stream, Metadata metadata)
             throws IOException, TikaException {
-        this(stream, metadata, DEFAULT_DETECTOR);
+        this(stream, metadata, new CompositeEncodingDetector(
+                DEFAULT_LOADER.loadServiceProviders(EncodingDetector.class)));
     }
 
     public AutoDetectReader(InputStream stream)

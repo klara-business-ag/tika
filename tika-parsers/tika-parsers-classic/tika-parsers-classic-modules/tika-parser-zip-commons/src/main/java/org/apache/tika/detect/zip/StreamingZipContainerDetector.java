@@ -86,5 +86,4 @@ public class StreamingZipContainerDetector extends DefaultZipContainerDetector {
             return detectCompressorFormat(prefix, length);
         }
     }
-    
 }
