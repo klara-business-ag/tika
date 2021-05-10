@@ -101,13 +101,11 @@ public class DefaultParser extends CompositeParser {
     }
 
     public DefaultParser(MediaTypeRegistry registry, ClassLoader loader) {
-        this(registry, new ServiceLoader(loader, Boolean.getBoolean("org.apache.tika.service.error.warn") 
-                ? LoadErrorHandler.WARN:LoadErrorHandler.IGNORE, true));
+        this(registry, new ServiceLoader(loader, true));
     }
 
     public DefaultParser(ClassLoader loader) {
-        this(MediaTypeRegistry.getDefaultRegistry(), new ServiceLoader(loader, Boolean.getBoolean("org.apache.tika.service.error.warn") 
-                ? LoadErrorHandler.WARN:LoadErrorHandler.IGNORE, true));
+        this(MediaTypeRegistry.getDefaultRegistry(), new ServiceLoader(loader, true));
     }
 
     public DefaultParser(MediaTypeRegistry registry) {

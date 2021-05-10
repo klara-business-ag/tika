@@ -44,8 +44,7 @@ public class DefaultMetadataFilter extends CompositeMetadataFilter {
     }
 
     public DefaultMetadataFilter() {
-        this(new ServiceLoader(DefaultMetadataFilter.class.getClassLoader(), Boolean.getBoolean("org.apache.tika.service.error.warn") 
-                ? LoadErrorHandler.WARN:LoadErrorHandler.IGNORE, true));
+        this(new ServiceLoader());
     }
 
     /** {@inheritDoc} */

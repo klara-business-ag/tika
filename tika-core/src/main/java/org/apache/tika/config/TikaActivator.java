@@ -75,7 +75,6 @@ public class TikaActivator implements BundleActivator, ServiceTrackerCustomizer 
     }
 
     public void stop(BundleContext context) throws Exception {
-        
         detectorTracker.close();
         embeddedStreamTranslatorTracker.close();
         encodingDetectorTracker.close();

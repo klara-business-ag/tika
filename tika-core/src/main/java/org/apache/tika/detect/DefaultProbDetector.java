@@ -17,7 +17,6 @@
 package org.apache.tika.detect;
 
 import java.util.List;
-import org.apache.tika.config.LoadErrorHandler;
 import org.apache.tika.config.ServiceLoader;
 import org.apache.tika.mime.MimeTypes;
 import org.apache.tika.mime.ProbabilisticMimeDetectionSelector;
@@ -51,8 +50,7 @@ public class DefaultProbDetector extends CompositeDetector {
 
     public DefaultProbDetector(ProbabilisticMimeDetectionSelector sel,
             ClassLoader loader) {
-        this(sel, new ServiceLoader(loader, Boolean.getBoolean("org.apache.tika.service.error.warn") 
-                ? LoadErrorHandler.WARN:LoadErrorHandler.IGNORE, true));
+        this(sel, new ServiceLoader(loader, true));
     }
 
     public DefaultProbDetector(ClassLoader loader) {

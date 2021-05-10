@@ -68,8 +68,7 @@ public class DefaultZipContainerDetector implements Detector {
 
 
     public DefaultZipContainerDetector() {
-        loader = new ServiceLoader(DefaultZipContainerDetector.class.getClassLoader(), Boolean.getBoolean("org.apache.tika.service.error.warn") 
-                ? LoadErrorHandler.WARN:LoadErrorHandler.IGNORE, true);
+        loader = new ServiceLoader(DefaultZipContainerDetector.class.getClassLoader(), true);
     }
 
     public DefaultZipContainerDetector(ServiceLoader loader) {

@@ -19,7 +19,6 @@ package org.apache.tika.detect;
 import java.util.Collection;
 import java.util.List;
 import javax.imageio.spi.ServiceRegistry;
-import org.apache.tika.config.LoadErrorHandler;
 import org.apache.tika.config.ServiceLoader;
 import org.apache.tika.mime.MimeTypes;
 import org.apache.tika.utils.ServiceLoaderUtils;

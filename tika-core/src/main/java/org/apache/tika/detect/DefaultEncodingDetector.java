@@ -18,11 +18,10 @@
 package org.apache.tika.detect;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import javax.imageio.spi.ServiceRegistry;
-import org.apache.tika.config.LoadErrorHandler;
 import org.apache.tika.config.ServiceLoader;
-
 
 /**
  * A composite encoding detector based on all the {@link EncodingDetector} implementations
@@ -42,11 +41,11 @@ public class DefaultEncodingDetector extends CompositeEncodingDetector {
     private static final long serialVersionUID = 1L;
     
     private ServiceLoader loader;
+    private Collection<Class<? extends EncodingDetector>> excludeEncodingDetectors;
 
 
     public DefaultEncodingDetector() {
-        this(new ServiceLoader(DefaultEncodingDetector.class.getClassLoader(), Boolean.getBoolean("org.apache.tika.service.error.warn") 
-                ? LoadErrorHandler.WARN:LoadErrorHandler.IGNORE, true));
+        this(new ServiceLoader(DefaultEncodingDetector.class.getClassLoader(), true));
     }
 
     public DefaultEncodingDetector(ServiceLoader loader) {
@@ -57,6 +56,7 @@ public class DefaultEncodingDetector extends CompositeEncodingDetector {
     public DefaultEncodingDetector(ServiceLoader loader,
                                    Collection<Class<? extends EncodingDetector>> excludeEncodingDetectors) {
         super(loader.loadStaticServiceProviders(EncodingDetector.class), excludeEncodingDetectors);
+        this.excludeEncodingDetectors = excludeEncodingDetectors;
         this.loader = loader;
     }
 
@@ -64,6 +64,14 @@ public class DefaultEncodingDetector extends CompositeEncodingDetector {
     public List<EncodingDetector> getDetectors() {
         if (loader != null) {
             List<EncodingDetector> detectors = loader.loadDynamicServiceProviders(EncodingDetector.class);
+            if (excludeEncodingDetectors == null) {
+                Iterator<EncodingDetector> it = detectors.iterator();
+                while (it.hasNext()) {
+                    if (isExcluded(excludeEncodingDetectors, it.next().getClass())) {
+                        it.remove();
+                    }
+                }
+            }
             detectors.addAll(super.getDetectors());
             return detectors;
         } 
