@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.apache.tika.config.ServiceLoader;
 import org.apache.tika.metadata.Metadata;
 
