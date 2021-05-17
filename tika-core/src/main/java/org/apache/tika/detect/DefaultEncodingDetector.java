@@ -45,7 +45,11 @@ public class DefaultEncodingDetector extends CompositeEncodingDetector {
 
 
     public DefaultEncodingDetector() {
-        this(new ServiceLoader(DefaultEncodingDetector.class.getClassLoader(), true));
+        this(false);
+    }
+
+    public DefaultEncodingDetector(boolean loadDynamicServices) {
+        this(new ServiceLoader(DefaultEncodingDetector.class.getClassLoader(), loadDynamicServices));
     }
 
     public DefaultEncodingDetector(ServiceLoader loader) {
@@ -64,7 +68,7 @@ public class DefaultEncodingDetector extends CompositeEncodingDetector {
     public List<EncodingDetector> getDetectors() {
         if (loader != null) {
             List<EncodingDetector> detectors = loader.loadDynamicServiceProviders(EncodingDetector.class);
-            if (excludeEncodingDetectors == null) {
+            if (excludeEncodingDetectors != null) {
                 Iterator<EncodingDetector> it = detectors.iterator();
                 while (it.hasNext()) {
                     if (isExcluded(excludeEncodingDetectors, it.next().getClass())) {

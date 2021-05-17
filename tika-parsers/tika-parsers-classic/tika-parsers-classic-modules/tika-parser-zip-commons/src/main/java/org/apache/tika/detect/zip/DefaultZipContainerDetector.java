@@ -68,7 +68,11 @@ public class DefaultZipContainerDetector implements Detector {
 
 
     public DefaultZipContainerDetector() {
-        loader = new ServiceLoader(DefaultZipContainerDetector.class.getClassLoader(), true);
+        this(false);
+    }
+
+    public DefaultZipContainerDetector(boolean loadDynamicServices) {
+        this(new ServiceLoader(DefaultZipContainerDetector.class.getClassLoader(), loadDynamicServices));
     }
 
     public DefaultZipContainerDetector(ServiceLoader loader) {

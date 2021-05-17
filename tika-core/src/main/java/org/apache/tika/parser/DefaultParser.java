@@ -101,11 +101,11 @@ public class DefaultParser extends CompositeParser {
     }
 
     public DefaultParser(MediaTypeRegistry registry, ClassLoader loader) {
-        this(registry, new ServiceLoader(loader, true));
+        this(registry, new ServiceLoader(loader));
     }
 
     public DefaultParser(ClassLoader loader) {
-        this(MediaTypeRegistry.getDefaultRegistry(), new ServiceLoader(loader, true));
+        this(MediaTypeRegistry.getDefaultRegistry(), new ServiceLoader(loader));
     }
 
     public DefaultParser(MediaTypeRegistry registry) {
