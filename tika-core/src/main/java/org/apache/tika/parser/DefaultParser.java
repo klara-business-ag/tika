@@ -112,8 +112,12 @@ public class DefaultParser extends CompositeParser {
         this(registry, new ServiceLoader());
     }
 
+    public DefaultParser(boolean loadDynamicServices) {
+        this(MediaTypeRegistry.getDefaultRegistry(), new ServiceLoader(loadDynamicServices));
+    }
+
     public DefaultParser() {
-        this(MediaTypeRegistry.getDefaultRegistry());
+        this(true);
     }
 
     @Override

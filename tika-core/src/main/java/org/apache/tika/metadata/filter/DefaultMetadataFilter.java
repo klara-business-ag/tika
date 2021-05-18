@@ -43,8 +43,12 @@ public class DefaultMetadataFilter extends CompositeMetadataFilter {
         super(metadataFilters);
     }
 
+    public DefaultMetadataFilter(boolean loadDynamicServices) {
+        this(new ServiceLoader(loadDynamicServices));
+    }
+
     public DefaultMetadataFilter() {
-        this(new ServiceLoader());
+        this(true);
     }
 
     /** {@inheritDoc} */

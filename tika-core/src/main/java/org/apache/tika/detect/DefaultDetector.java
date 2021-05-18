@@ -18,7 +18,6 @@ package org.apache.tika.detect;
 
 import java.util.Collection;
 import java.util.Comparator;
-
 import java.util.List;
 
 import javax.imageio.spi.ServiceRegistry;
@@ -104,8 +103,12 @@ public class DefaultDetector extends CompositeDetector {
         this(types, new ServiceLoader());
     }
 
+    public DefaultDetector(boolean loadDynamicServices) {
+        this(MimeTypes.getDefaultMimeTypes(), new ServiceLoader(loadDynamicServices));
+    }
+
     public DefaultDetector() {
-        this(MimeTypes.getDefaultMimeTypes());
+        this(true);
     }
 
     @Override

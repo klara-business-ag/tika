@@ -37,8 +37,6 @@ public class CompositeEncodingDetector implements EncodingDetector, Serializable
 
     private final List<EncodingDetector> detectors;
 
-    private ServiceLoader loader;
-
     public CompositeEncodingDetector(List<EncodingDetector> detectors,
                                      Collection<Class<? extends EncodingDetector>> excludeEncodingDetectors) {
         this.detectors = new LinkedList<>();
@@ -56,7 +54,6 @@ public class CompositeEncodingDetector implements EncodingDetector, Serializable
     }
 
     public CompositeEncodingDetector(ServiceLoader loader) {
-        this.loader = loader;
         this.detectors = new LinkedList<>();
         this.detectors.addAll(loader.loadStaticServiceProviders(EncodingDetector.class));
     }
@@ -80,12 +77,7 @@ public class CompositeEncodingDetector implements EncodingDetector, Serializable
     }
 
     public List<EncodingDetector> getDetectors() {
-        List<EncodingDetector> allDetectors = new LinkedList<>();
-        if (loader != null) {
-            allDetectors.addAll(loader.loadDynamicServiceProviders(EncodingDetector.class));
-        }
-        allDetectors.addAll(detectors);
-        return allDetectors;
+        return Collections.unmodifiableList(detectors);
     }
 
     protected boolean isExcluded(Collection<Class<? extends EncodingDetector>> excludeEncodingDetectors,

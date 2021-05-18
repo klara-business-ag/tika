@@ -152,9 +152,13 @@ public class ServiceLoader {
     			? LoadErrorHandler.WARN:LoadErrorHandler.IGNORE);
     }
 
+    public ServiceLoader(boolean dynamic) {
+        this(getContextClassLoader(), Boolean.getBoolean("org.apache.tika.service.error.warn") 
+                ? LoadErrorHandler.WARN:LoadErrorHandler.IGNORE, dynamic);
+    }
+
     public ServiceLoader() {
-    	this(getContextClassLoader(), Boolean.getBoolean("org.apache.tika.service.error.warn") 
-    			? LoadErrorHandler.WARN:LoadErrorHandler.IGNORE, true);
+    	this(true);
     }
     
     /**

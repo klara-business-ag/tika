@@ -45,6 +45,10 @@ public class StreamingZipContainerDetector extends DefaultZipContainerDetector {
        // Empty
     }
 
+    public StreamingZipContainerDetector(boolean loadDynamicServices) {
+        super(loadDynamicServices);
+    }
+
     public StreamingZipContainerDetector(ServiceLoader loader) {
         super(loader);
     }

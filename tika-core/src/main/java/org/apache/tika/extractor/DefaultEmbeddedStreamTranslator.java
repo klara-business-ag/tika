@@ -44,7 +44,11 @@ public class DefaultEmbeddedStreamTranslator implements EmbeddedStreamTranslator
     }
 
     public DefaultEmbeddedStreamTranslator() {
-        this(new ServiceLoader());
+        this(true);
+    }
+    
+    public DefaultEmbeddedStreamTranslator(boolean loadDynamicServices) {
+        this(new ServiceLoader(loadDynamicServices));
     }
     
     private DefaultEmbeddedStreamTranslator(ServiceLoader loader) {
