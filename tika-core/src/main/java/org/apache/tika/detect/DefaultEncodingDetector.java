@@ -19,9 +19,8 @@ package org.apache.tika.detect;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import javax.imageio.spi.ServiceRegistry;
 import org.apache.tika.config.ServiceLoader;
 
@@ -66,6 +65,12 @@ public class DefaultEncodingDetector extends CompositeEncodingDetector {
                                    Collection<Class<? extends EncodingDetector>> excludeEncodingDetectors) {
         super(loader.loadStaticServiceProviders(EncodingDetector.class), excludeEncodingDetectors);
         dynamicDetectors = loader.loadDynamicServiceProviders(EncodingDetector.class);
+        Iterator<EncodingDetector> it = dynamicDetectors.iterator();
+        while(it.hasNext()) {
+            if (isExcluded(excludeEncodingDetectors, it.next().getClass())) {
+                it.remove();
+            }
+        }
         this.loader = loader;
     }
 

@@ -129,7 +129,7 @@ public class TikaConfigSerializer {
 
     private static void addTranslator(Mode mode, Element rootElement, Document doc, TikaConfig config) {
         // Unlike the other entries, TikaConfig only wants one of
-        //  these, and no outer <staticTranslators> list
+        //  these, and no outer <translators> list
         Translator translator = config.getTranslator();
         if (mode == Mode.MINIMAL && translator instanceof DefaultTranslator) {
             Node mimeComment = doc.createComment(
@@ -145,7 +145,7 @@ public class TikaConfigSerializer {
                 translatorElement.setAttribute("class", translator.getClass().getCanonicalName());
                 rootElement.appendChild(translatorElement);
             } else {
-                rootElement.appendChild(doc.createComment("No staticTranslators available"));
+                rootElement.appendChild(doc.createComment("No translators available"));
             }
         }
     }

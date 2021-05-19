@@ -41,7 +41,7 @@ public class DefaultEmbeddedStreamTranslator implements EmbeddedStreamTranslator
 
     private static List<EmbeddedStreamTranslator> getDefaultFilters(ServiceLoader loader) {
         List<EmbeddedStreamTranslator> embeddedStreamTranslators
-                = loader.loadServiceProviders(EmbeddedStreamTranslator.class);
+                = loader.loadStaticServiceProviders(EmbeddedStreamTranslator.class);
         ServiceLoaderUtils.sortLoadedClasses(embeddedStreamTranslators);
         return embeddedStreamTranslators;
     }

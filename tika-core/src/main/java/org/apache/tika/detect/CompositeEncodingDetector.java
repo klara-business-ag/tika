@@ -53,11 +53,6 @@ public class CompositeEncodingDetector implements EncodingDetector, Serializable
         this.detectors.addAll(detectors);
     }
 
-    public CompositeEncodingDetector(ServiceLoader loader) {
-        this.detectors = new LinkedList<>();
-        this.detectors.addAll(loader.loadStaticServiceProviders(EncodingDetector.class));
-    }
-
     /**
      *
      * @param input text document input stream, or <code>null</code>
@@ -80,7 +75,7 @@ public class CompositeEncodingDetector implements EncodingDetector, Serializable
         return Collections.unmodifiableList(detectors);
     }
 
-    private boolean isExcluded(Collection<Class<? extends EncodingDetector>> excludeEncodingDetectors,
+    protected boolean isExcluded(Collection<Class<? extends EncodingDetector>> excludeEncodingDetectors,
                                Class<? extends EncodingDetector> encodingDetector) {
         return excludeEncodingDetectors.contains(encodingDetector) ||
                 assignableFrom(excludeEncodingDetectors, encodingDetector);
