@@ -80,7 +80,7 @@ public class CompositeEncodingDetector implements EncodingDetector, Serializable
         return Collections.unmodifiableList(detectors);
     }
 
-    protected boolean isExcluded(Collection<Class<? extends EncodingDetector>> excludeEncodingDetectors,
+    private boolean isExcluded(Collection<Class<? extends EncodingDetector>> excludeEncodingDetectors,
                                Class<? extends EncodingDetector> encodingDetector) {
         return excludeEncodingDetectors.contains(encodingDetector) ||
                 assignableFrom(excludeEncodingDetectors, encodingDetector);
