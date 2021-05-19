@@ -17,9 +17,11 @@
 
 package org.apache.tika.detect;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.imageio.spi.ServiceRegistry;
 import org.apache.tika.config.ServiceLoader;
 
@@ -39,10 +41,11 @@ import org.apache.tika.config.ServiceLoader;
 public class DefaultEncodingDetector extends CompositeEncodingDetector {
 
     private static final long serialVersionUID = 1L;
-    
-    private ServiceLoader loader;
-    private Collection<Class<? extends EncodingDetector>> excludeEncodingDetectors;
 
+    private ServiceLoader loader;
+
+    private List<EncodingDetector> dynamicDetectors;
+    private boolean loadDynamicServices;
 
     public DefaultEncodingDetector() {
         this(false);
@@ -50,28 +53,30 @@ public class DefaultEncodingDetector extends CompositeEncodingDetector {
 
     public DefaultEncodingDetector(boolean loadDynamicServices) {
         this(new ServiceLoader(DefaultEncodingDetector.class.getClassLoader(), loadDynamicServices));
+        this.loadDynamicServices = loadDynamicServices;
     }
 
     public DefaultEncodingDetector(ServiceLoader loader) {
         super(loader.loadStaticServiceProviders(EncodingDetector.class));
+        dynamicDetectors = loader.loadDynamicServiceProviders(EncodingDetector.class);
         this.loader = loader;
     }
 
     public DefaultEncodingDetector(ServiceLoader loader,
                                    Collection<Class<? extends EncodingDetector>> excludeEncodingDetectors) {
         super(loader.loadStaticServiceProviders(EncodingDetector.class), excludeEncodingDetectors);
-        this.excludeEncodingDetectors = excludeEncodingDetectors;
+        dynamicDetectors = loader.loadDynamicServiceProviders(EncodingDetector.class);
         this.loader = loader;
     }
 
     @Override
     public List<EncodingDetector> getDetectors() {
-        if (loader != null) {
-            List<EncodingDetector> detectors = loader.loadDynamicServiceProviders(EncodingDetector.class);
-            detectors.addAll(super.getDetectors());
-            return detectors;
+        if (loadDynamicServices) {
+            dynamicDetectors = loader.loadDynamicServiceProviders(EncodingDetector.class);
         } 
-        return super.getDetectors();
+        List<EncodingDetector> detectors = new ArrayList<>(dynamicDetectors);
+        detectors.addAll(super.getDetectors());
+        return detectors;
     }
 
 }

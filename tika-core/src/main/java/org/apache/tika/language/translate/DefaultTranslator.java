@@ -42,11 +42,11 @@ public class DefaultTranslator implements Translator {
     }
 
     /**
-     * Finds all statically loadable translators and sort the list by name,
+     * Finds all statically loadable staticTranslators and sort the list by name,
      * rather than discovery order.
      *
      * @param loader service loader
-     * @return ordered list of statically loadable translators
+     * @return ordered list of statically loadable staticTranslators
      */
     private static List<Translator> getDefaultTranslators(ServiceLoader loader) {
         List<Translator> translators = loader.loadStaticServiceProviders(Translator.class);
@@ -71,7 +71,7 @@ public class DefaultTranslator implements Translator {
         if (t != null) {
             return t.translate(text, sourceLanguage, targetLanguage);
         }
-        throw new TikaException("No translators currently available");
+        throw new TikaException("No staticTranslators currently available");
     }
 
     /**
@@ -82,11 +82,11 @@ public class DefaultTranslator implements Translator {
         if (t != null) {
             return t.translate(text, targetLanguage);
         }
-        throw new TikaException("No translators currently available");
+        throw new TikaException("No staticTranslators currently available");
     }
     
     /**
-     * Returns all available translators
+     * Returns all available staticTranslators
      */
     public List<Translator> getTranslators() {
         return getDefaultTranslators(loader);

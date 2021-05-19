@@ -24,6 +24,7 @@ import org.apache.tika.utils.ServiceLoaderUtils;
 public class DefaultMetadataFilter extends CompositeMetadataFilter {
 
     private ServiceLoader serviceLoader;
+    private boolean loadDynamicServices;
 
 
     private static List<MetadataFilter> getDefaultFilters(
@@ -45,16 +46,17 @@ public class DefaultMetadataFilter extends CompositeMetadataFilter {
 
     public DefaultMetadataFilter(boolean loadDynamicServices) {
         this(new ServiceLoader(loadDynamicServices));
+        this.loadDynamicServices = loadDynamicServices;
     }
 
     public DefaultMetadataFilter() {
-        this(true);
+        this(new ServiceLoader());
     }
 
     /** {@inheritDoc} */
     @Override
     protected List<MetadataFilter> getFilters() {
-        if (serviceLoader != null) {
+        if (loadDynamicServices) {
             List<MetadataFilter> filters = serviceLoader.loadDynamicServiceProviders(MetadataFilter.class);
             filters.addAll(super.getFilters());
             return filters;

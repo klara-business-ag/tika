@@ -681,7 +681,7 @@ public class TikaConfig {
                     // Regular class, create as-is
                     loaded = newInstance(loadedClass);
                     // TODO Support arguments, needed for Translators etc
-                    // See the thread "Configuring parsers and translators" for details 
+                    // See the thread "Configuring parsers and staticTranslators" for details 
                 }
 
                 //Assigning the params to bean fields/setters

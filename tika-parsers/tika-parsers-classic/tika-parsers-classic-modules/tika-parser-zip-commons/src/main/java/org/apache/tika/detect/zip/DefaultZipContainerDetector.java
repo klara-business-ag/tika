@@ -38,6 +38,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DefaultZipContainerDetector implements Detector {
@@ -63,27 +64,31 @@ public class DefaultZipContainerDetector implements Detector {
     int markLimit = 16 * 1024 * 1024;
 
     private ServiceLoader loader;
+    private boolean loadDynamicsServices;
 
     private List<ZipContainerDetector> staticZipDetectors;
+    private List<ZipContainerDetector> dynamicZipDetectors;
 
 
     public DefaultZipContainerDetector() {
-        this(false);
+        this(new ServiceLoader(DefaultZipContainerDetector.class.getClassLoader()));
     }
 
     public DefaultZipContainerDetector(boolean loadDynamicServices) {
         this(new ServiceLoader(DefaultZipContainerDetector.class.getClassLoader(), loadDynamicServices));
+        this.loadDynamicsServices = loadDynamicServices;
     }
 
     public DefaultZipContainerDetector(ServiceLoader loader) {
         this.loader = loader;
-        staticZipDetectors = new ArrayList<ZipContainerDetector>();
-        staticZipDetectors.addAll(loader.loadStaticServiceProviders(ZipContainerDetector.class));
+        staticZipDetectors = loader.loadStaticServiceProviders(ZipContainerDetector.class);
+        dynamicZipDetectors = loader.loadDynamicServiceProviders(ZipContainerDetector.class);
     }
 
     public DefaultZipContainerDetector(List<ZipContainerDetector> zipDetectors) {
         //TODO: OPCBased needs to be last!!!
         staticZipDetectors = zipDetectors;
+        dynamicZipDetectors = Collections.emptyList();
     }
 
 
@@ -263,10 +268,10 @@ public class DefaultZipContainerDetector implements Detector {
     }
 
     private List<ZipContainerDetector> getDetectors() {
-        List<ZipContainerDetector> zipDetectors = new ArrayList<>();
-        if (loader != null) {
-            zipDetectors.addAll(loader.loadDynamicServiceProviders(ZipContainerDetector.class));
+        if (loadDynamicsServices) {
+            dynamicZipDetectors = loader.loadDynamicServiceProviders(ZipContainerDetector.class);
         }
+        List<ZipContainerDetector> zipDetectors = new ArrayList<>(dynamicZipDetectors);
         zipDetectors.addAll(staticZipDetectors);
         return zipDetectors;
     }
