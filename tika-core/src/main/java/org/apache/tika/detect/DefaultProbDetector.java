@@ -62,8 +62,13 @@ public class DefaultProbDetector extends CompositeDetector {
         this(new ProbabilisticMimeDetectionSelector(types), new ServiceLoader());
     }
 
+    public DefaultProbDetector(boolean loadDynamicServices) {
+        this(new ProbabilisticMimeDetectionSelector(MimeTypes.getDefaultMimeTypes()), 
+                new ServiceLoader(loadDynamicServices));
+    }
+
     public DefaultProbDetector() {
-        this(MimeTypes.getDefaultMimeTypes());
+        this(true);
     }
 
     @Override
