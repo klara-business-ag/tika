@@ -270,7 +270,6 @@ public class DefaultZipContainerDetector implements Detector {
     private List<ZipContainerDetector> getDetectors() {
         if (loadDynamicsServices) {
             dynamicZipDetectors = loader.loadDynamicServiceProviders(ZipContainerDetector.class);
-            return dynamicZipDetectors;
         }
         List<ZipContainerDetector> zipDetectors = new ArrayList<>(dynamicZipDetectors);
         zipDetectors.addAll(staticZipDetectors);
