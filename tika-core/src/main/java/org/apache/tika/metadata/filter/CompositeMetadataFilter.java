@@ -19,7 +19,6 @@ package org.apache.tika.metadata.filter;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 
-import java.util.Collections;
 import java.util.List;
 
 public class CompositeMetadataFilter implements MetadataFilter {
@@ -29,14 +28,10 @@ public class CompositeMetadataFilter implements MetadataFilter {
     public CompositeMetadataFilter(List<MetadataFilter> filters) {
         this.filters = filters;
     }
-    
-    protected List<MetadataFilter> getFilters() {
-        return Collections.unmodifiableList(filters);
-    }
 
     @Override
     public void filter(Metadata metadata) throws TikaException {
-        for (MetadataFilter filter : getFilters()) {
+        for (MetadataFilter filter : filters) {
             filter.filter(metadata);
         }
     }

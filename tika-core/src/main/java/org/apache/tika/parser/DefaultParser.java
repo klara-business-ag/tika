@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.apache.tika.config.LoadErrorHandler;
+
 import org.apache.tika.config.ServiceLoader;
 import org.apache.tika.detect.DefaultEncodingDetector;
 import org.apache.tika.detect.EncodingDetector;
@@ -112,12 +112,8 @@ public class DefaultParser extends CompositeParser {
         this(registry, new ServiceLoader());
     }
 
-    public DefaultParser(boolean loadDynamicServices) {
-        this(MediaTypeRegistry.getDefaultRegistry(), new ServiceLoader(loadDynamicServices));
-    }
-
     public DefaultParser() {
-        this(true);
+        this(MediaTypeRegistry.getDefaultRegistry());
     }
 
     @Override

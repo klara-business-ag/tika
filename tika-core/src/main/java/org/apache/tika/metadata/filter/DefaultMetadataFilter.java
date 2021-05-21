@@ -16,16 +16,13 @@
  */
 package org.apache.tika.metadata.filter;
 
-import java.util.List;
-import org.apache.tika.config.LoadErrorHandler;
 import org.apache.tika.config.ServiceLoader;
+import org.apache.tika.mime.MimeTypes;
 import org.apache.tika.utils.ServiceLoaderUtils;
 
+import java.util.List;
+
 public class DefaultMetadataFilter extends CompositeMetadataFilter {
-
-    private ServiceLoader serviceLoader;
-    private boolean loadDynamicServices;
-
 
     private static List<MetadataFilter> getDefaultFilters(
             ServiceLoader loader) {
@@ -37,30 +34,13 @@ public class DefaultMetadataFilter extends CompositeMetadataFilter {
 
     public DefaultMetadataFilter(ServiceLoader serviceLoader) {
         super(getDefaultFilters(serviceLoader));
-        this.serviceLoader = serviceLoader;
     }
 
     public DefaultMetadataFilter(List<MetadataFilter> metadataFilters) {
         super(metadataFilters);
     }
 
-    public DefaultMetadataFilter(boolean loadDynamicServices) {
-        this(new ServiceLoader(loadDynamicServices));
-        this.loadDynamicServices = loadDynamicServices;
-    }
-
     public DefaultMetadataFilter() {
         this(new ServiceLoader());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected List<MetadataFilter> getFilters() {
-        if (loadDynamicServices) {
-            List<MetadataFilter> filters = serviceLoader.loadDynamicServiceProviders(MetadataFilter.class);
-            filters.addAll(super.getFilters());
-            return filters;
-        }
-        return super.getFilters();
     }
 }

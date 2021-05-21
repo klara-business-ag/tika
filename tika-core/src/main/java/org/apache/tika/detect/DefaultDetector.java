@@ -103,12 +103,8 @@ public class DefaultDetector extends CompositeDetector {
         this(types, new ServiceLoader());
     }
 
-    public DefaultDetector(boolean loadDynamicServices) {
-        this(MimeTypes.getDefaultMimeTypes(), new ServiceLoader(loadDynamicServices));
-    }
-
     public DefaultDetector() {
-        this(true);
+        this(MimeTypes.getDefaultMimeTypes());
     }
 
     @Override

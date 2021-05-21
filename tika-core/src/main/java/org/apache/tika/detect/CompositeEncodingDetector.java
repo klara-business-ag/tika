@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.tika.config.ServiceLoader;
 import org.apache.tika.metadata.Metadata;
 
 public class CompositeEncodingDetector implements EncodingDetector, Serializable {
@@ -75,7 +74,7 @@ public class CompositeEncodingDetector implements EncodingDetector, Serializable
         return Collections.unmodifiableList(detectors);
     }
 
-    protected boolean isExcluded(Collection<Class<? extends EncodingDetector>> excludeEncodingDetectors,
+    private boolean isExcluded(Collection<Class<? extends EncodingDetector>> excludeEncodingDetectors,
                                Class<? extends EncodingDetector> encodingDetector) {
         return excludeEncodingDetectors.contains(encodingDetector) ||
                 assignableFrom(excludeEncodingDetectors, encodingDetector);

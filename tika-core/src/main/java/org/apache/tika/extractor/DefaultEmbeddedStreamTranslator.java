@@ -16,13 +16,13 @@
  */
 package org.apache.tika.extractor;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.tika.config.ServiceLoader;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.utils.ServiceLoaderUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * Loads EmbeddedStreamTranslators via service loading.  Tries to run each
@@ -32,38 +32,21 @@ import org.apache.tika.utils.ServiceLoaderUtils;
  */
 public class DefaultEmbeddedStreamTranslator implements EmbeddedStreamTranslator {
 
-    final List<EmbeddedStreamTranslator> staticTranslators;
-    List<EmbeddedStreamTranslator> dynamicTranslators;
-
-    private ServiceLoader loader;
-    private boolean loadDynamicServices;
-
+    final List<EmbeddedStreamTranslator> translators;
 
     private static List<EmbeddedStreamTranslator> getDefaultFilters(ServiceLoader loader) {
         List<EmbeddedStreamTranslator> embeddedStreamTranslators
-                = loader.loadStaticServiceProviders(EmbeddedStreamTranslator.class);
+                = loader.loadServiceProviders(EmbeddedStreamTranslator.class);
         ServiceLoaderUtils.sortLoadedClasses(embeddedStreamTranslators);
         return embeddedStreamTranslators;
     }
 
     public DefaultEmbeddedStreamTranslator() {
-        this(new ServiceLoader());
-    }
-    
-    public DefaultEmbeddedStreamTranslator(boolean loadDynamicServices) {
-        this(new ServiceLoader(loadDynamicServices));
-        this.loadDynamicServices = loadDynamicServices;
-    }
-    
-    private DefaultEmbeddedStreamTranslator(ServiceLoader loader) {
-        this(getDefaultFilters(loader));
-        dynamicTranslators = loader.loadDynamicServiceProviders(EmbeddedStreamTranslator.class);
-        ServiceLoaderUtils.sortLoadedClasses(dynamicTranslators);
-        this.loader = loader;
+        this(getDefaultFilters(new ServiceLoader()));
     }
 
     private DefaultEmbeddedStreamTranslator(List<EmbeddedStreamTranslator> translators) {
-        this.staticTranslators = translators;
+        this.translators = translators;
     }
 
     /**
@@ -76,7 +59,7 @@ public class DefaultEmbeddedStreamTranslator implements EmbeddedStreamTranslator
      */
     @Override
     public boolean shouldTranslate(InputStream inputStream, Metadata metadata) throws IOException {
-        for (EmbeddedStreamTranslator translator : getTranslators()) {
+        for (EmbeddedStreamTranslator translator : translators) {
             if (translator.shouldTranslate(inputStream, metadata)) {
                 return true;
             }
@@ -93,23 +76,12 @@ public class DefaultEmbeddedStreamTranslator implements EmbeddedStreamTranslator
      */
     @Override
     public InputStream translate(InputStream inputStream, Metadata metadata) throws IOException {
-        for (EmbeddedStreamTranslator translator : getTranslators()) {
+        for (EmbeddedStreamTranslator translator : translators) {
             InputStream translated = translator.translate(inputStream, metadata);
             if (translated != null) {
                 return translated;
             }
         }
         return inputStream;
-    }
-
-
-    public List<EmbeddedStreamTranslator> getTranslators() {
-        if (loadDynamicServices) {
-            dynamicTranslators = loader.loadDynamicServiceProviders(EmbeddedStreamTranslator.class);
-            ServiceLoaderUtils.sortLoadedClasses(dynamicTranslators);
-        }
-        List<EmbeddedStreamTranslator> translators = new ArrayList<>(dynamicTranslators);
-        translators.addAll(staticTranslators);
-        return translators;
     }
 }
