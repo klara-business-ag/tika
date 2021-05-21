@@ -23,6 +23,10 @@ import org.apache.tika.io.LookaheadInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
 /**
  * Currently only used in tests.  Unlike {@link DefaultZipContainerDetector},
  * this will never try to open the File as a ZipFile; this relies solely
