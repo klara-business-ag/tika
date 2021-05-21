@@ -39,10 +39,9 @@ public class StreamingZipContainerDetector extends DefaultZipContainerDetector {
     /** Serial version UID */
     private static final long serialVersionUID = 2891763938430295453L;
 
-    
 
     public StreamingZipContainerDetector() {
-       // Empty
+        this(new ServiceLoader(StreamingZipContainerDetector.class.getClassLoader(), true));
     }
 
     public StreamingZipContainerDetector(ServiceLoader loader) {
