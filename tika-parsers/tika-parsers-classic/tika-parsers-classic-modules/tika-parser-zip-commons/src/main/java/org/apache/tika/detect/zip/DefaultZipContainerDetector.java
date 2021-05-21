@@ -260,6 +260,7 @@ public class DefaultZipContainerDetector implements Detector {
         if (loader != null) {
             List<ZipContainerDetector> zipDetectors = loader.loadDynamicServiceProviders(ZipContainerDetector.class);
             zipDetectors.addAll(staticZipDetectors);
+            return zipDetectors;
         }
         return staticZipDetectors;
     }
