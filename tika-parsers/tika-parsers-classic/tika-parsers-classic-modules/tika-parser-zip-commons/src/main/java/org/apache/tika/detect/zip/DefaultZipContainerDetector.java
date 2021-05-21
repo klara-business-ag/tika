@@ -16,6 +16,11 @@
  */
 package org.apache.tika.detect.zip;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -25,21 +30,14 @@ import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.CloseShieldInputStream;
+
 import org.apache.tika.config.Field;
-import org.apache.tika.config.LoadErrorHandler;
 import org.apache.tika.config.ServiceLoader;
 import org.apache.tika.detect.Detector;
 import org.apache.tika.io.LookaheadInputStream;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class DefaultZipContainerDetector implements Detector {
 
@@ -64,31 +62,22 @@ public class DefaultZipContainerDetector implements Detector {
     int markLimit = 16 * 1024 * 1024;
 
     private ServiceLoader loader;
-    private boolean loadDynamicsServices;
 
     private List<ZipContainerDetector> staticZipDetectors;
-    private List<ZipContainerDetector> dynamicZipDetectors;
 
 
     public DefaultZipContainerDetector() {
-        this(true);
-    }
-
-    public DefaultZipContainerDetector(boolean loadDynamicServices) {
-        this(new ServiceLoader(DefaultZipContainerDetector.class.getClassLoader(), loadDynamicServices));
-        this.loadDynamicsServices = loadDynamicServices;
+        this(new ServiceLoader(DefaultZipContainerDetector.class.getClassLoader(), true));
     }
 
     public DefaultZipContainerDetector(ServiceLoader loader) {
         this.loader = loader;
         staticZipDetectors = loader.loadStaticServiceProviders(ZipContainerDetector.class);
-        dynamicZipDetectors = loader.loadDynamicServiceProviders(ZipContainerDetector.class);
     }
 
     public DefaultZipContainerDetector(List<ZipContainerDetector> zipDetectors) {
         //TODO: OPCBased needs to be last!!!
         staticZipDetectors = zipDetectors;
-        dynamicZipDetectors = Collections.emptyList();
     }
 
 
@@ -268,11 +257,10 @@ public class DefaultZipContainerDetector implements Detector {
     }
 
     private List<ZipContainerDetector> getDetectors() {
-        if (loadDynamicsServices) {
-            dynamicZipDetectors = loader.loadDynamicServiceProviders(ZipContainerDetector.class);
+        if (loader != null) {
+            List<ZipContainerDetector> zipDetectors = loader.loadDynamicServiceProviders(ZipContainerDetector.class);
+            zipDetectors.addAll(staticZipDetectors);
         }
-        List<ZipContainerDetector> zipDetectors = new ArrayList<>(dynamicZipDetectors);
-        zipDetectors.addAll(staticZipDetectors);
-        return zipDetectors;
+        return staticZipDetectors;
     }
 }
