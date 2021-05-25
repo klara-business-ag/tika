@@ -16,6 +16,11 @@
  */
 package org.apache.tika.detect.zip;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -25,7 +30,6 @@ import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.CloseShieldInputStream;
-
 import org.apache.tika.config.Field;
 import org.apache.tika.config.ServiceLoader;
 import org.apache.tika.detect.Detector;
@@ -33,11 +37,6 @@ import org.apache.tika.io.LookaheadInputStream;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
 
 public class DefaultZipContainerDetector implements Detector {
 
@@ -258,8 +257,8 @@ public class DefaultZipContainerDetector implements Detector {
 
     private List<ZipContainerDetector> getDetectors() {
         if (loader != null) {
-            List<ZipContainerDetector> zipDetectors = loader.loadDynamicServiceProviders(ZipContainerDetector.class);
-            zipDetectors.addAll(staticZipDetectors);
+            List<ZipContainerDetector> zipDetectors = new ArrayList<>(staticZipDetectors);
+            zipDetectors.addAll(loader.loadDynamicServiceProviders(ZipContainerDetector.class));
             return zipDetectors;
         }
         return staticZipDetectors;
