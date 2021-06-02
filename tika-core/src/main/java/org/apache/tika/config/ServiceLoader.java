@@ -130,7 +130,7 @@ public class ServiceLoader {
         this.loader = loader;
         this.handler = handler;
         this.initializableProblemHandler = initializableProblemHandler;
-        this.dynamic = dynamic;
+        this.dynamic = true;
 
     }
     public ServiceLoader(
