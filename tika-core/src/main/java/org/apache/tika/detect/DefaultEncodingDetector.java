@@ -19,6 +19,7 @@ package org.apache.tika.detect;
 
 import javax.imageio.spi.ServiceRegistry;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.tika.config.ServiceLoader;
 
@@ -37,17 +38,36 @@ import org.apache.tika.config.ServiceLoader;
  */
 public class DefaultEncodingDetector extends CompositeEncodingDetector {
 
+    private static final long serialVersionUID = 1L;
+
+    private final transient ServiceLoader loader;
+
+
     public DefaultEncodingDetector() {
-        this(new ServiceLoader(DefaultEncodingDetector.class.getClassLoader()));
+        this(new ServiceLoader(DefaultEncodingDetector.class.getClassLoader(), true));
     }
 
     public DefaultEncodingDetector(ServiceLoader loader) {
-        super(loader.loadServiceProviders(EncodingDetector.class));
+        super(loader.loadStaticServiceProviders(EncodingDetector.class));
+        this.loader = loader;
     }
 
     public DefaultEncodingDetector(ServiceLoader loader,
                                    Collection<Class<? extends EncodingDetector>> excludeEncodingDetectors) {
-        super(loader.loadServiceProviders(EncodingDetector.class), excludeEncodingDetectors);
+        super(loader.loadStaticServiceProviders(EncodingDetector.class), excludeEncodingDetectors);
+        this.loader = loader;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public List<EncodingDetector> getDetectors() {
+        if (loader != null) {
+            List<EncodingDetector> detectors =
+                    loader.loadDynamicServiceProviders(EncodingDetector.class);
+            detectors.addAll(super.getDetectors());
+            return detectors;
+        } 
+        return super.getDetectors();
     }
 
 }
