@@ -30,7 +30,7 @@
   </parent>
 
   <artifactId>tika-core</artifactId>
-  <version>2.0.0-ALPHA-axonivy.1-SNAPSHOT</version>
+  <version>2.0.0-ALPHA-axonivy.1</version>
   <packaging>bundle</packaging>
   <name>Apache Tika core</name>
   <url>http://tika.apache.org/</url>
