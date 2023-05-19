@@ -79,7 +79,7 @@ public class DefaultZipContainerDetector implements Detector {
 
     public DefaultZipContainerDetector() {
         this(new ServiceLoader(DefaultZipContainerDetector.class.getClassLoader(),
-                LoadErrorHandler.WARN, false));
+                LoadErrorHandler.WARN, true));
     }
 
     public DefaultZipContainerDetector(ServiceLoader loader) {

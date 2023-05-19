@@ -45,7 +45,7 @@ public class StreamingZipContainerDetector extends DefaultZipContainerDetector {
 
     public StreamingZipContainerDetector() {
         this(new ServiceLoader(StreamingZipContainerDetector.class.getClassLoader(),
-                LoadErrorHandler.WARN, false));
+                LoadErrorHandler.WARN, true));
     }
 
     public StreamingZipContainerDetector(ServiceLoader loader) {
