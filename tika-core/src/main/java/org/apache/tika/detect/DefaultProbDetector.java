@@ -40,7 +40,7 @@ public class DefaultProbDetector extends CompositeDetector {
     }
 
     public DefaultProbDetector(ProbabilisticMimeDetectionSelector sel, ClassLoader loader) {
-        this(sel, new ServiceLoader(loader));
+        this(sel, new ServiceLoader(loader, true));
     }
 
     public DefaultProbDetector(ClassLoader loader) {

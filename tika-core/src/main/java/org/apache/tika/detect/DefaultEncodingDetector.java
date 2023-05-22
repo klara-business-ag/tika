@@ -44,7 +44,7 @@ public class DefaultEncodingDetector extends CompositeEncodingDetector {
 
 
     public DefaultEncodingDetector() {
-        this(new ServiceLoader(DefaultEncodingDetector.class.getClassLoader()));
+        this(new ServiceLoader(DefaultEncodingDetector.class.getClassLoader(), true));
     }
 
     public DefaultEncodingDetector(ServiceLoader loader) {
