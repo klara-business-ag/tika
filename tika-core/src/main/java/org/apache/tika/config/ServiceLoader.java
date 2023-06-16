@@ -80,7 +80,7 @@ public class ServiceLoader {
     public ServiceLoader(ClassLoader loader) {
         this(loader,
                 Boolean.getBoolean("org.apache.tika.service.error.warn") ? LoadErrorHandler.WARN :
-                    LoadErrorHandler.IGNORE);
+                    LoadErrorHandler.IGNORE, true);
     }
 
     public ServiceLoader(ClassLoader loader, boolean dynamic) {
